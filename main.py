@@ -24,6 +24,8 @@ window_size = 300# Variable to control initial window size
 5. output
 """
 
+
+
 def list_available_devices(max_devices=10):
     """
     Returns array containing indices of webcams
@@ -155,6 +157,17 @@ def main():
             command=lambda: show_frame(frame_entry),
         )
         BACK_button.pack()
+
+        CHECK_button = tk.Button(
+            frame_camera,
+            text="Check",
+            font=("Helvetica", 24),
+            width=10,
+            height=2,
+            command=lambda: show_frame(frame_entry),
+        )
+        CHECK_button.pack()
+
 
         ###frame_operation elements
         CAPTURE_button = tk.Button(
