@@ -114,6 +114,8 @@ def main():
         global frame_camera, camera_label
         frame_entry = tk.Frame(root)
         frame_camera = tk.Frame(root)
+        frame_operation = tk.Frame(root)
+        frame_output = tk.Frame(root)
 
         # Main frame elements
         ENTRY_label = tk.Label(
