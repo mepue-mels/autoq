@@ -24,10 +24,12 @@ window_size = 300# Variable to control initial window size
 5. output
 """
 
-def camCheck(devices, root, camera_label):
+def camCheck(devices, root, camera_label, check):
     devices[:] = list_available_devices()
     camera_label.config(text="Cameras found!") 
+    check[0] = True
     root.update()
+    show_frame(frame_camera)
 
 def list_available_devices(max_devices=10):
     """
@@ -50,8 +52,8 @@ def show_frame(frame):
     """
     global cap
 
-    if frame == frame_operation:
-        if cap is None:
+    if frame == frame_camera:
+        if (cap==None and check[0]==True):
             cap = cv2.VideoCapture(2)
         show_camera_feed(camera_label)
     else:
@@ -111,18 +113,23 @@ def show_camera_feed(label):
 def main():
     if connectivity_test(url):  # Entry point
         #global stuff
+        global frame_camera, camera_label, check
         WINDOW_RESOLUTION="1280x720"
+        check = [False]
+
         available_devices = []
         # Main canvas
         root = tk.Tk()
         root.geometry(WINDOW_RESOLUTION)
 
         # Define the frames here
-        global frame_operation, camera_label
         frame_entry = tk.Frame(root) #1
         frame_camera = tk.Frame(root) #2
         frame_operation = tk.Frame(root) #3
         frame_output = tk.Frame(root) #4
+
+        camera_label = tk.Label(frame_camera)
+        camera_label.pack(pady=100)
 
         # Main frame elements
         ENTRY_label = tk.Label(
@@ -142,15 +149,25 @@ def main():
         )
         ENTRY_button.pack()
 
-        # Elements for camera frame
-        camera_label = tk.Label(frame_operation)
-        camera_label.pack(pady=100)
 
         CAMERA_label = tk.Label(frame_camera,
                                 text="Press 'Check' to check for cameras",
                                 font=("Helvetica", 32),
                                 )
         CAMERA_label.pack(pady=150)
+
+
+
+        CHECK_button = tk.Button(
+            frame_camera,
+            text="Check",
+            font=("Helvetica", 24),
+            width=10,
+            height=2,
+            command=lambda: camCheck(available_devices, root, CAMERA_label, check)
+        )
+
+        CHECK_button.pack(pady=25)
 
         BACK_button = tk.Button(
             frame_camera,
@@ -161,17 +178,6 @@ def main():
             command=lambda: show_frame(frame_entry),
         )
         BACK_button.pack()
-
-        CHECK_button = tk.Button(
-            frame_camera,
-            text="Check",
-            font=("Helvetica", 24),
-            width=10,
-            height=2,
-            command=lambda: camCheck(available_devices, root, CAMERA_label)
-        )
-
-        CHECK_button.pack()
 
 
         ###frame_operation elements
