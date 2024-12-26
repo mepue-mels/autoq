@@ -14,7 +14,7 @@ Entry point: main()
 
 url = decrypt_url()
 cap = None  # Global variable for camera capture
-window_size = 100# Variable to control initial window size
+window_size = 300# Variable to control initial window size
 
 def show_frame(frame):
     """Switch to the specified frame and manage the camera lifecycle."""
