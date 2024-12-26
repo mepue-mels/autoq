@@ -24,14 +24,10 @@ window_size = 300# Variable to control initial window size
 5. output
 """
 
-def camCheck(camera_label):
-    available_devices = list_available_devices()
-    camera_label = tk.Label(frame_camera,
-                            text="Cameras found!",
-                            font=("Helvetica", 32),
-                            )
-
-    camera_label.pack(pady=150)
+def camCheck(devices, root, camera_label):
+    devices[:] = list_available_devices()
+    camera_label.config(text="Cameras found!") 
+    root.update()
 
 def list_available_devices(max_devices=10):
     """
@@ -116,6 +112,7 @@ def main():
     if connectivity_test(url):  # Entry point
         #global stuff
         WINDOW_RESOLUTION="1280x720"
+        available_devices = []
         # Main canvas
         root = tk.Tk()
         root.geometry(WINDOW_RESOLUTION)
@@ -171,7 +168,7 @@ def main():
             font=("Helvetica", 24),
             width=10,
             height=2,
-            command=lambda: camCheck(CAMERA_label)
+            command=lambda: camCheck(available_devices, root, CAMERA_label)
         )
 
         CHECK_button.pack()
