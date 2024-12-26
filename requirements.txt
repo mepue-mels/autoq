@@ -3,3 +3,4 @@ flask
 requests
 opencv-python
 pillow
+cryptography
