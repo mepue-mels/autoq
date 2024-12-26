@@ -16,13 +16,38 @@ url = decrypt_url()
 cap = None  # Global variable for camera capture
 window_size = 300# Variable to control initial window size
 
+"""
+1. main screen
+2. webcam check
+3. camera choose
+4. operations
+5. output
+"""
+
+def list_available_devices(max_devices=10):
+    """
+    Returns array containing indices of webcams
+
+    Arguments: none
+    Returns: array: integers
+    """
+    available_devices = []
+    for device_id in range(max_devices):
+        cap = cv2.VideoCapture(device_id)
+        if cap.isOpened():
+            available_devices.append(device_id)
+            cap.release()  # Release the device once checked
+    return available_devices
+
 def show_frame(frame):
-    """Switch to the specified frame and manage the camera lifecycle."""
+    """
+    Switch to the specified frame and manage the camera lifecycle.
+    """
     global cap
 
     if frame == frame_camera:
         if cap is None:
-            cap = cv2.VideoCapture(1)
+            cap = cv2.VideoCapture(2)
         show_camera_feed(camera_label)
     else:
         if cap is not None:
@@ -32,16 +57,27 @@ def show_frame(frame):
     frame.tkraise()
 
 def capture_frame():
+    """
+    Writes the image as 'captured_image.png' as being detected by the given camera
+
+    Arguments: none
+    Returns: none
+    """
+
 	global cap
-
 	ret, frame = cap.read()
-
 	if ret:
 		cv2.imwrite('captured_image.png', frame)
 		send()
 
 def show_camera_feed(label):
-    """Display the camera feed in the given label."""
+    """
+    Display the camera feed in the given label.
+
+    Arguments: label (webcam index)
+    Returns: none
+    """
+
     global cap, window_size
 
     if cap is not None:
