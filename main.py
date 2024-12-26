@@ -105,10 +105,10 @@ def show_camera_feed(label):
 
 def main():
     if connectivity_test(url):  # Entry point
-
+        WINDOW_RESOLUTION="1280x720"
         # Main canvas
         root = tk.Tk()
-        root.geometry("1280x720")
+        root.geometry()
 
         # Define the frames here
         global frame_camera, camera_label
