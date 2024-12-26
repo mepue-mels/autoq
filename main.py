@@ -127,7 +127,7 @@ def main():
         # Main frame elements
         ENTRY_label = tk.Label(
             frame_entry,
-            text="Automatic Question Generation",
+            text="ayoko na sa thesis",
             font=("Helvetica", 64),
         )
         ENTRY_label.pack(pady=150)
@@ -147,7 +147,7 @@ def main():
         camera_label.pack(pady=100)
 
         CAMERA_label = tk.Label(frame_camera,
-                                text="Please wait as the cameras are checked",
+                                text="Press 'Check' to check for cameras",
                                 font=("Helvetica", 32),
                                 )
         CAMERA_label.pack(pady=150)
