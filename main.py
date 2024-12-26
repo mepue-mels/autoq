@@ -24,7 +24,14 @@ window_size = 300# Variable to control initial window size
 5. output
 """
 
+def camCheck(camera_label):
+    available_devices = list_available_devices()
+    camera_label = tk.Label(frame_camera,
+                            text="Cameras found!",
+                            font=("Helvetica", 32),
+                            )
 
+    camera_label.pack(pady=150)
 
 def list_available_devices(max_devices=10):
     """
@@ -164,8 +171,9 @@ def main():
             font=("Helvetica", 24),
             width=10,
             height=2,
-            command=lambda: show_frame(frame_entry),
+            command=lambda: camCheck(CAMERA_label)
         )
+
         CHECK_button.pack()
 
 
