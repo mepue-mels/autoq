@@ -45,7 +45,7 @@ def show_frame(frame):
     """
     global cap
 
-    if frame == frame_camera:
+    if frame == frame_operation:
         if cap is None:
             cap = cv2.VideoCapture(2)
         show_camera_feed(camera_label)
@@ -64,11 +64,11 @@ def capture_frame():
     Returns: none
     """
 
-	global cap
-	ret, frame = cap.read()
-	if ret:
-		cv2.imwrite('captured_image.png', frame)
-		send()
+    global cap
+    ret, frame = cap.read()
+    if ret:
+        cv2.imwrite('captured_image.png', frame)
+        send()
 
 def show_camera_feed(label):
     """
@@ -105,17 +105,18 @@ def show_camera_feed(label):
 
 def main():
     if connectivity_test(url):  # Entry point
+        #global stuff
         WINDOW_RESOLUTION="1280x720"
         # Main canvas
         root = tk.Tk()
-        root.geometry()
+        root.geometry(WINDOW_RESOLUTION)
 
         # Define the frames here
-        global frame_camera, camera_label
-        frame_entry = tk.Frame(root)
-        frame_camera = tk.Frame(root)
-        frame_operation = tk.Frame(root)
-        frame_output = tk.Frame(root)
+        global frame_operation, camera_label
+        frame_entry = tk.Frame(root) #1
+        frame_camera = tk.Frame(root) #2
+        frame_operation = tk.Frame(root) #3
+        frame_output = tk.Frame(root) #4
 
         # Main frame elements
         ENTRY_label = tk.Label(
@@ -136,8 +137,14 @@ def main():
         ENTRY_button.pack()
 
         # Elements for camera frame
-        camera_label = tk.Label(frame_camera)
+        camera_label = tk.Label(frame_operation)
         camera_label.pack(pady=100)
+
+        CAMERA_label = tk.Label(frame_camera,
+                                text="Please wait as the cameras are checked",
+                                font=("Helvetica", 32),
+                                )
+        CAMERA_label.pack(pady=150)
 
         BACK_button = tk.Button(
             frame_camera,
@@ -149,8 +156,9 @@ def main():
         )
         BACK_button.pack()
 
+        ###frame_operation elements
         CAPTURE_button = tk.Button(
-            frame_camera,
+            frame_operation,
             text="Capture",
             font=("Helvetica", 24),
             width=10,
