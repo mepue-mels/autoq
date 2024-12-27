@@ -67,15 +67,19 @@ def show_frame(frame):
 
 def capture_frame(BACK_button):
     """
-    Captures an image, extracts the center region, sharpens it, enhances contrast and brightness,
-    rotates it 90 degrees clockwise, and saves it as 'captured_image.png'.
+    Captures an image, resizes it to 1920x1080, extracts the center region, sharpens it, 
+    enhances contrast and brightness, rotates it 90 degrees clockwise, and saves it as 'captured_image.png'.
     """
     BACK_button.config(text="Done", command=lambda: endCapture())
 
     global cap
     ret, frame = cap.read()
     if ret:
-        # Get dimensions of the frame
+        # Resize the frame to 1920x1080
+        target_width, target_height = 1920, 1080
+        frame = cv2.resize(frame, (target_width, target_height))
+
+        # Get dimensions of the resized frame
         height, width, _ = frame.shape
         center_x, center_y = width // 2, height // 2
         crop_width, crop_height = width // 4, height // 4  # 50% of frame size
@@ -94,8 +98,8 @@ def capture_frame(BACK_button):
         sharpened_frame = cv2.filter2D(frame, -1, kernel)
 
         # Enhance contrast and brightness
-        alpha = 1.3 # Contrast control (1.0-3.0)
-        beta = 0  # Brightness control (0-100)
+        alpha = 1.3  # Contrast control (1.0-3.0)
+        beta = 0     # Brightness control (0-100)
         enhanced_frame = cv2.convertScaleAbs(sharpened_frame, alpha=alpha, beta=beta)
 
         # Rotate the image 90 degrees clockwise
@@ -104,7 +108,7 @@ def capture_frame(BACK_button):
         # Save the processed image
         cv2.imwrite('captured_image.png', rotated_frame)
         print("Image captured and saved!")
-        send(questionBuffer)
+        #send(questionBuffer)
         root.update()
 
 
