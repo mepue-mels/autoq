@@ -3,6 +3,7 @@ from encode import *
 import tkinter as tk
 from PIL import Image, ImageTk
 import cv2
+import numpy as np
 
 """
 main.py
@@ -14,7 +15,7 @@ Entry point: main()
 
 url = decrypt_url()
 cap = None  # Global variable for camera capture
-window_size = 300# Variable to control initial window size
+window_size = 500# Variable to control initial window size
 
 """
 1. main screen
@@ -24,12 +25,13 @@ window_size = 300# Variable to control initial window size
 5. output
 """
 
-def camCheck(devices, root, camera_label, check):
+def camCheck(devices, root, camera_label, check, check_btn, cam_btn):
     devices[:] = list_available_devices()
     camera_label.config(text="Cameras found!") 
     check[0] = True
+    check_btn.pack_forget()
+    cam_btn.pack()
     root.update()
-    show_frame(frame_camera)
 
 def list_available_devices(max_devices=10):
     """
@@ -52,30 +54,46 @@ def show_frame(frame):
     """
     global cap
 
-    if frame == frame_camera:
-        if (cap==None and check[0]==True):
-            cap = cv2.VideoCapture(2)
-        show_camera_feed(camera_label)
-    else:
+    if frame == frame_choose:
+        if cap is None and check[0]:  # Simplified condition
+            cap = cv2.VideoCapture(0)
+            show_camera_feed(camera_label)
+    else:  # This else block was incorrectly indented
         if cap is not None:
             cap.release()
             cap = None
 
-    frame.tkraise()
+    frame.tkraise()  # This should always execute to raise the frame
 
 def capture_frame():
     """
-    Writes the image as 'captured_image.png' as being detected by the given camera
+    Captures an image, sharpens it, enhances brightness and contrast,
+    rotates it 90 degrees clockwise, and saves it as 'captured_image.png'.
 
     Arguments: none
     Returns: none
     """
-
     global cap
     ret, frame = cap.read()
     if ret:
-        cv2.imwrite('captured_image.png', frame)
+        # Apply sharpening filter
+        kernel = np.array([[0, -1, 0],
+                           [-1, 5, -1],
+                           [0, -1, 0]])
+        sharpened_frame = cv2.filter2D(frame, -1, kernel)
+
+        # Enhance contrast and brightness
+        alpha = 1.25  # Contrast control (1.0-3.0)
+        beta = 30    # Brightness control (0-100)
+        enhanced_frame = cv2.convertScaleAbs(sharpened_frame, alpha=alpha, beta=beta)
+
+        # Rotate the image 90 degrees clockwise
+        rotated_frame = cv2.rotate(enhanced_frame, cv2.ROTATE_90_CLOCKWISE)
+
+        # Save the processed image
+        cv2.imwrite('captured_image.png', rotated_frame)
         send()
+
 
 def show_camera_feed(label):
     """
@@ -112,8 +130,7 @@ def show_camera_feed(label):
 
 def main():
     if connectivity_test(url):  # Entry point
-        #global stuff
-        global frame_camera, camera_label, check
+        global frame_choose, camera_label, check
         WINDOW_RESOLUTION="1280x720"
         check = [False]
 
@@ -123,13 +140,13 @@ def main():
         root.geometry(WINDOW_RESOLUTION)
 
         # Define the frames here
-        frame_entry = tk.Frame(root) #1
-        frame_camera = tk.Frame(root) #2
-        frame_operation = tk.Frame(root) #3
-        frame_output = tk.Frame(root) #4
+        frame_entry = tk.Frame(root)  # Main entry screen
+        frame_camera = tk.Frame(root)  # Camera check screen
+        frame_choose = tk.Frame(root)  # Camera feed screen
 
-        camera_label = tk.Label(frame_camera)
-        camera_label.pack(pady=100)
+        # Modify this if changing the display frame
+        camera_label = tk.Label(frame_choose)
+        camera_label.pack(pady=150)
 
         # Main frame elements
         ENTRY_label = tk.Label(
@@ -149,14 +166,11 @@ def main():
         )
         ENTRY_button.pack()
 
-
         CAMERA_label = tk.Label(frame_camera,
                                 text="Press 'Check' to check for cameras",
                                 font=("Helvetica", 32),
                                 )
         CAMERA_label.pack(pady=150)
-
-
 
         CHECK_button = tk.Button(
             frame_camera,
@@ -164,8 +178,15 @@ def main():
             font=("Helvetica", 24),
             width=10,
             height=2,
-            command=lambda: camCheck(available_devices, root, CAMERA_label, check)
+            command=lambda: camCheck(available_devices, root, CAMERA_label, check, CHECK_button, CAMERA_continue)
         )
+
+        CAMERA_continue = tk.Button(frame_camera, 
+                                    text="Continue",
+                                    font=("Helvetica", 24), 
+                                    width=10,
+                                    height=2,
+                                    command=lambda: show_frame(frame_choose))
 
         CHECK_button.pack(pady=25)
 
@@ -179,10 +200,8 @@ def main():
         )
         BACK_button.pack()
 
-
-        ###frame_operation elements
         CAPTURE_button = tk.Button(
-            frame_operation,
+            frame_choose,
             text="Capture",
             font=("Helvetica", 24),
             width=10,
@@ -193,7 +212,7 @@ def main():
         CAPTURE_button.pack()
 
         # Stack the elements from the grid
-        for frame in (frame_entry, frame_camera):
+        for frame in (frame_entry, frame_camera, frame_choose):
             frame.grid(row=0, column=0, sticky="nsew")
 
         # Unrestrict the main canvas for resizing using weights
@@ -205,6 +224,7 @@ def main():
         root.mainloop()
     else:
         print("Error: cloud not active")
+
 
 # Entry point for window
 if __name__ == "__main__":

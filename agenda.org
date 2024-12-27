@@ -1,0 +1,10 @@
+#+title: Agenda
+
+1. Thesis
+   - [ ] finish app layout
+   - [ ] webcam tests
+2. Web Dev
+   - [ ] webpages
+   - [ ] api call
+3. Design
+   - [ ] double check schematic connections
