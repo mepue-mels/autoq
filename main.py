@@ -65,7 +65,7 @@ def show_frame(frame):
 
     frame.tkraise()  # This should always execute to raise the frame
 
-def capture_frame():
+def capture_frame(BACK_button):
     """
     Captures an image, sharpens it, enhances brightness and contrast,
     rotates it 90 degrees clockwise, and saves it as 'captured_image.png'.
@@ -73,6 +73,8 @@ def capture_frame():
     Arguments: none
     Returns: none
     """
+    BACK_button.config(text="Done", command=lambda: endCapture())
+
     global cap
     ret, frame = cap.read()
     if ret:
@@ -93,6 +95,7 @@ def capture_frame():
         # Save the processed image
         cv2.imwrite('captured_image.png', rotated_frame)
         send(questionBuffer)
+        root.update()
 
 
 def show_camera_feed(label):
@@ -128,21 +131,27 @@ def show_camera_feed(label):
 
         label.after(10, lambda: show_camera_feed(label))
 
-def continueCapture():
-    print()  
+
 def endCapture():
-    CAPTURE_END[0] = False
+    file_name = "out.txt"
+
+    with open(file_name, "w") as file:
+        file.write("\n".join(questionBuffer))
+    
+    root.quit()
+    root.destroy()
+    print("success, sana grumaduate ka na")
 
 
 def main():
     if connectivity_test(url):  # Entry point
-        global frame_choose, camera_label, check, questionBuffer, CAPTURE_END
+        global frame_choose, camera_label, check, questionBuffer
         WINDOW_RESOLUTION="1280x720"
         check = [False]
         questionBuffer = []
-        CAPTURE_END = [False]
         available_devices = []
         # Main canvas
+        global root
         root = tk.Tk()
         root.geometry(WINDOW_RESOLUTION)
 
@@ -214,14 +223,14 @@ def main():
             font=("Helvetica", 24),
             width=10,
             height=2,
-            command=lambda: capture_frame(),
+            command=lambda: capture_frame(CAMERA_BACK_button),
         )
 
         CAPTURE_button.pack()
 
         CAMERA_BACK_button = tk.Button(
             frame_choose,
-            text="Capture",
+            text="Home",
             font=("Helvetica", 24),
             width=10,
             height=2,

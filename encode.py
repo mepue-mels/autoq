@@ -55,7 +55,7 @@ def send(buffer):
     # Path to the image
     image_path = "./captured_image.png"  # Replace with the correct path to your image
     # Flask app endpoint URL (adjusted for Cloud Run)
-    flask_url = decrypt_url()  # Update to Cloud Run URL
+    flask_url = decrypt_url() + '/predict'  # Update to Cloud Run URL
 
     # Encode the image
     encoded_image = encode_image_to_base64(image_path)
