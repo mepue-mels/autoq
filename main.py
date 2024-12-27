@@ -104,8 +104,8 @@ def capture_frame(BACK_button):
         # Save the processed image
         cv2.imwrite('captured_image.png', rotated_frame)
         print("Image captured and saved!")
-        root.update()
         send(questionBuffer)
+        root.update()
 
 
 def show_camera_feed(label):
