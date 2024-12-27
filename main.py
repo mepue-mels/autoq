@@ -92,7 +92,7 @@ def capture_frame():
 
         # Save the processed image
         cv2.imwrite('captured_image.png', rotated_frame)
-        #send()
+        send(questionBuffer)
 
 
 def show_camera_feed(label):
@@ -128,12 +128,19 @@ def show_camera_feed(label):
 
         label.after(10, lambda: show_camera_feed(label))
 
+def continueCapture():
+    print()  
+def endCapture():
+    CAPTURE_END[0] = False
+
+
 def main():
     if connectivity_test(url):  # Entry point
-        global frame_choose, camera_label, check
+        global frame_choose, camera_label, check, questionBuffer, CAPTURE_END
         WINDOW_RESOLUTION="1280x720"
         check = [False]
-
+        questionBuffer = []
+        CAPTURE_END = [False]
         available_devices = []
         # Main canvas
         root = tk.Tk()

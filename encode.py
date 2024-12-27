@@ -50,7 +50,7 @@ def send_image_to_flask(image_base64, url):
 
 
 # Main execution
-def send():
+def send(buffer):
     # Path to the image
     image_path = "./captured_image.png"  # Replace with the correct path to your image
     # Flask app endpoint URL (adjusted for Cloud Run)
@@ -67,5 +67,7 @@ def send():
         if response:
             print("Response from Flask app:")
             print(response)
+            for q in response['prediction']:
+                buffer.append(q)
         else:
             print("Failed to get a valid response from the Flask app.")
