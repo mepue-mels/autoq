@@ -67,17 +67,26 @@ def show_frame(frame):
 
 def capture_frame(BACK_button):
     """
-    Captures an image, sharpens it, enhances brightness and contrast,
+    Captures an image, extracts the center region, sharpens it, enhances contrast and brightness,
     rotates it 90 degrees clockwise, and saves it as 'captured_image.png'.
-
-    Arguments: none
-    Returns: none
     """
     BACK_button.config(text="Done", command=lambda: endCapture())
 
     global cap
     ret, frame = cap.read()
     if ret:
+        # Get dimensions of the frame
+        height, width, _ = frame.shape
+        center_x, center_y = width // 2, height // 2
+        crop_width, crop_height = width // 4, height // 4  # 50% of frame size
+
+        # Extract the center region
+        """
+        center_frame = frame[
+            center_y - crop_height : center_y + crop_height,
+            center_x - crop_width : center_x + crop_width
+        ]
+        """
         # Apply sharpening filter
         kernel = np.array([[0, -1, 0],
                            [-1, 5, -1],
@@ -85,8 +94,8 @@ def capture_frame(BACK_button):
         sharpened_frame = cv2.filter2D(frame, -1, kernel)
 
         # Enhance contrast and brightness
-        alpha = 2  # Contrast control (1.0-3.0)
-        beta = 10    # Brightness control (0-100)
+        alpha = 1.3 # Contrast control (1.0-3.0)
+        beta = 0  # Brightness control (0-100)
         enhanced_frame = cv2.convertScaleAbs(sharpened_frame, alpha=alpha, beta=beta)
 
         # Rotate the image 90 degrees clockwise
@@ -94,18 +103,15 @@ def capture_frame(BACK_button):
 
         # Save the processed image
         cv2.imwrite('captured_image.png', rotated_frame)
-        send(questionBuffer)
+        print("Image captured and saved!")
         root.update()
+        send(questionBuffer)
 
 
 def show_camera_feed(label):
     """
-    Display the camera feed in the given label.
-
-    Arguments: label (webcam index)
-    Returns: none
+    Display the camera feed in the given label, highlighting the center region for focus.
     """
-
     global cap, window_size
 
     if cap is not None:
@@ -115,6 +121,16 @@ def show_camera_feed(label):
             # Correct color format from BGR to RGB
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             height, width, _ = frame.shape
+
+            # Draw a rectangle to indicate the center focus area
+            center_x, center_y = width // 2, height // 2
+            rect_width, rect_height = width // 4, height // 4  # 50% of frame size
+            cv2.rectangle(
+                frame,
+                (center_x - rect_width, center_y - rect_height),
+                (center_x + rect_width, center_y + rect_height),
+                (255, 0, 0), 2  # Blue rectangle
+            )
 
             # Resize image based on window size while maintaining aspect ratio
             scale = window_size / max(width, height)
@@ -131,7 +147,6 @@ def show_camera_feed(label):
 
         label.after(10, lambda: show_camera_feed(label))
 
-
 def endCapture():
     file_name = "out.txt"
 
@@ -146,7 +161,7 @@ def endCapture():
 def main():
     if connectivity_test(url):  # Entry point
         global frame_choose, camera_label, check, questionBuffer
-        WINDOW_RESOLUTION="1280x720"
+        WINDOW_RESOLUTION="1024x600"
         check = [False]
         questionBuffer = []
         available_devices = []
@@ -163,7 +178,7 @@ def main():
 
         # Modify this if changing the display frame
         camera_label = tk.Label(frame_choose)
-        camera_label.pack(pady=150)
+        camera_label.pack(pady=25)
 
         # Main frame elements
         ENTRY_label = tk.Label(

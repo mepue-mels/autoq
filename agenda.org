@@ -1,8 +1,8 @@
 #+title: Agenda
 
 1. Thesis
-   - [ ] finish app layout
-   - [ ] webcam tests
+   - [x] finish app layout
+   - [x] webcam tests
 2. Web Dev
    - [ ] webpages
    - [ ] api call
