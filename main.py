@@ -143,6 +143,7 @@ def main():
         frame_entry = tk.Frame(root)  # Main entry screen
         frame_camera = tk.Frame(root)  # Camera check screen
         frame_choose = tk.Frame(root)  # Camera feed screen
+        frame_qr = tk.Frame(root)
 
         # Modify this if changing the display frame
         camera_label = tk.Label(frame_choose)
@@ -210,6 +211,17 @@ def main():
         )
 
         CAPTURE_button.pack()
+
+        CAMERA_BACK_button = tk.Button(
+            frame_choose,
+            text="Capture",
+            font=("Helvetica", 24),
+            width=10,
+            height=2,
+            command=lambda: show_frame(frame_entry),
+        )
+
+        CAMERA_BACK_button.pack()
 
         # Stack the elements from the grid
         for frame in (frame_entry, frame_camera, frame_choose):
